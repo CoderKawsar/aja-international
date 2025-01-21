@@ -2,28 +2,62 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { MdArrowOutward } from "react-icons/md";
+import { useRef } from "react";
 
 type OTPFormInputs = {
-  digit1: number;
-  digit2: number;
-  digit3: number;
-  digit4: number;
-  digit5: number;
-  digit6: number;
+  digit1: string;
+  digit2: string;
+  digit3: string;
+  digit4: string;
+  digit5: string;
+  digit6: string;
 };
 
 export default function SignupOTP() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<OTPFormInputs>();
 
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
   const onSubmit = (data: OTPFormInputs) => {
-    console.log("Form Data:", data);
-    // Handle login logic here
+    console.log("Form Data:", data); // Logs form data
+    router.push("/otp-confirmation");
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const value = e.target.value;
+    if (/^[0-9]$/.test(value)) {
+      setValue(`digit${index + 1}` as keyof OTPFormInputs, value); // Update form state
+      if (inputRefs.current[index + 1]) {
+        inputRefs.current[index + 1]?.focus(); // Move to the next input
+      }
+    } else {
+      e.target.value = ""; // Clear invalid input
+    }
+  };
+
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    if (
+      e.key === "Backspace" &&
+      !e.currentTarget.value &&
+      inputRefs.current[index - 1]
+    ) {
+      inputRefs.current[index - 1]?.focus(); // Move to the previous input
+    }
   };
 
   return (
@@ -32,135 +66,37 @@ export default function SignupOTP() {
         <h2 className="font32 font-semibold text-center mb-12">
           Enter Verification Code
         </h2>
-        <p className="mt-4 text-textSecondary">
-          {" "}
-          <p className="text-center">
-            Enter the otp code that we sent to email{" "}
-            <span>coder***@gmail.com</span>. Be careful not to share the code
-            with anyone
-          </p>
+        <p className="text-center text-textSecondary">
+          Enter the otp code that we sent to email{" "}
+          <span className="text-textPrimary">coder***@gmail.com</span>. Be
+          careful not to share the code with anyone
         </p>
         <form onSubmit={handleSubmit(onSubmit)} className="mt-8">
           <div className="flex gap-x-4">
-            {/* OTP input Field 1 */}
-            <div className="mb-6">
-              <input
-                id="digit1"
-                type="number"
-                {...register("digit1", {
-                  required: "OPT code is required",
-                })}
-                placeholder="-"
-                className={`mt-1 block w-full px-4 py-2.5 border rounded-xl shadow-sm focus:outline-none ${
-                  errors.digit1 ? "border-red-500" : "border-gray-300"
-                } placeholder:text-center`}
-              />
-              {errors.digit1 && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.digit1.message}
-                </p>
-              )}
-            </div>
-            {/* OTP input Field 2 */}
-            <div className="mb-6">
-              <input
-                id="digit2"
-                type="number"
-                {...register("digit2", {
-                  required: "OPT code is required",
-                })}
-                maxLength={1}
-                placeholder="-"
-                className={`mt-1 block w-full px-4 py-2.5 border rounded-xl shadow-sm focus:outline-none ${
-                  errors.digit2 ? "border-red-500" : "border-gray-300"
-                } placeholder:text-center`}
-              />
-              {errors.digit2 && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.digit2.message}
-                </p>
-              )}
-            </div>
-            {/* OTP input Field 3 */}
-            <div className="mb-6">
-              <input
-                id="digit3"
-                type="number"
-                {...register("digit3", {
-                  required: "OPT code is required",
-                })}
-                placeholder="-"
-                maxLength={1}
-                className={`mt-1 block w-full px-4 py-2.5 border rounded-xl shadow-sm focus:outline-none ${
-                  errors.digit3 ? "border-red-500" : "border-gray-300"
-                } placeholder:text-center`}
-              />
-              {errors.digit3 && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.digit3.message}
-                </p>
-              )}
-            </div>
-            {/* OTP input Field 4 */}
-            <div className="mb-6">
-              <input
-                id="digit4"
-                type="number"
-                {...register("digit4", {
-                  required: "OPT code is required",
-                })}
-                maxLength={1}
-                placeholder="-"
-                className={`mt-1 block w-full px-4 py-2.5 border rounded-xl shadow-sm focus:outline-none ${
-                  errors.digit4 ? "border-red-500" : "border-gray-300"
-                } placeholder:text-center`}
-              />
-              {errors.digit4 && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.digit4.message}
-                </p>
-              )}
-            </div>
-            {/* OTP input Field 5 */}
-            <div className="mb-6">
-              <input
-                id="digit5"
-                type="number"
-                {...register("digit5", {
-                  required: "OPT code is required",
-                })}
-                maxLength={1}
-                placeholder="-"
-                className={`mt-1 block w-full px-4 py-2.5 border rounded-xl shadow-sm focus:outline-none ${
-                  errors.digit5 ? "border-red-500" : "border-gray-300"
-                } placeholder:text-center`}
-              />
-              {errors.digit5 && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.digit5.message}
-                </p>
-              )}
-            </div>
-            {/* OTP input Field 6 */}
-            <div className="mb-6">
-              <input
-                id="digit6"
-                type="number"
-                {...register("digit6", {
-                  required: "OPT code is required",
-                })}
-                placeholder="-"
-                maxLength={1}
-                className={`mt-1 block w-full px-4 py-2.5 border rounded-xl shadow-sm focus:outline-none ${
-                  errors.digit6 ? "border-red-500" : "border-gray-300"
-                } placeholder:text-center`}
-              />
-              {errors.digit6 && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.digit6.message}
-                </p>
-              )}
-            </div>
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="mb-6">
+                <input
+                  id={`digit${index + 1}`}
+                  type="text"
+                  maxLength={1}
+                  {...register(`digit${index + 1}` as keyof OTPFormInputs, {
+                    required: true,
+                    pattern: /^[0-9]$/,
+                  })}
+                  ref={(el) => {
+                    inputRefs.current[index] = el;
+                  }}
+                  placeholder="-"
+                  onChange={(e) => handleInputChange(e, index)}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  className={`mt-1 block w-full px-4 py-2.5 border rounded-xl shadow-sm focus:outline-none text-center ${
+                    errors[`digit${index + 1}` as keyof OTPFormInputs]
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  }`}
+                />
+              </div>
+            ))}
           </div>
 
           {/* Submit Button */}

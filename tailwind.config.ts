@@ -15,6 +15,7 @@ export default {
         textBrand: "#131921",
         blackBg: "#2A3037",
         lightBg: "#EFF2F4",
+        greenBg: "#C0F4E0",
       },
       borderRadius: {
         lg: "var(--radius)",
